@@ -41,7 +41,7 @@ class Login extends React.Component {
     render() {
         const { classes } = this.props;
         return (
-            <form className={classes.container} noValidate autoComplete="off"
+            <form className="LoginBox" noValidate autoComplete="off"
                 onSubmit={this.props.handleSubmit(this.state.userID)}
             >
                 <TextField

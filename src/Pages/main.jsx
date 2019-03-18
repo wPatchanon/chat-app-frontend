@@ -37,8 +37,8 @@ const styles = theme => ({
   chatbox: {
     flexGrow: 1,
     padding: 0,
-    margin: '0px 0px 0px 300px',
-    height: '75%',
+    margin: 'auto auto auto 320px',
+    height: '100%',
   },
 });
 
@@ -49,15 +49,27 @@ class Main extends Component {
       userId: '',
       client: socket(),
       isRegisterInProcess: false,
+      inputBox: '',
+      chatRoom: 'A',
     }
     this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
+    this.handleSendMsg = this.handleSendMsg.bind(this);
     this.register = this.register.bind(this)
+    this.message = this.message.bind(this)
   }
 
   handleSubmitLogin = uid => event => {
     event.preventDefault();
     this.setState({ userId: uid });
     this.register(uid);
+    this.state.client.join(this.state.chatRoom)
+  }
+
+  handleSendMsg = msg => event => {
+    event.preventDefault();
+    //console.log(msg)
+    this.setState({ inputBox: msg });
+    this.message(this.state.chatRoom, { userId: this.state.userId, content: msg });
   }
 
   register(name) {
@@ -67,6 +79,10 @@ class Main extends Component {
       if (err) return onRegisterResponse(null)
       return onRegisterResponse(user)
     })
+  }
+
+  message(chatroomName, msg) {
+    this.state.client.message(chatroomName, msg, null)
   }
 
 
@@ -107,8 +123,12 @@ class Main extends Component {
 
         <main className={classes.chatbox}>
           <h1>User: {this.state.userId}</h1>
-          <ChatBox />
+          <ChatBox message={[{ userId: 'Palm', content: 'dfsddf' }]} handleSubmit={this.handleSendMsg}
+            registerHandler={this.state.client.registerHandler}
+          />
         </main>
+
+
 
       </div>
     );

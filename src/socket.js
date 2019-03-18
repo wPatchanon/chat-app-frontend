@@ -30,6 +30,8 @@ export default function () {
 
     function message(chatroomName, msg, cb) {
         socket.emit('message', { chatroomName, message: msg }, cb)
+        //io.in(chatroomName).emit('big-announcement', 'the game will start soon');
+
     }
 
     function getChatrooms(cb) {
