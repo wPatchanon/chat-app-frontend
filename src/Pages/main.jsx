@@ -13,6 +13,8 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 import { Typography } from '@material-ui/core';
 import ChatBox from '../Container/chatbox';
+import Login from '../Container/login';
+import socket from '../socket';
 import 'typeface-roboto';
 
 const styles = theme => ({
@@ -41,6 +43,33 @@ const styles = theme => ({
 });
 
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userId: '',
+      client: socket(),
+      isRegisterInProcess: false,
+    }
+    this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
+    this.register = this.register.bind(this)
+  }
+
+  handleSubmitLogin = uid => event => {
+    event.preventDefault();
+    this.setState({ userId: uid });
+    this.register(uid);
+  }
+
+  register(name) {
+    const onRegisterResponse = user => this.setState({ isRegisterInProcess: false, user })
+    this.setState({ isRegisterInProcess: true })
+    this.state.client.register(name, (err, user) => {
+      if (err) return onRegisterResponse(null)
+      return onRegisterResponse(user)
+    })
+  }
+
+
   render() {
     const { classes } = this.props;
 
@@ -66,7 +95,7 @@ class Main extends Component {
     );
 
     return (
-      <div className={classes.root}>
+      (this.state.userId === '') ? <Login handleSubmit={this.handleSubmitLogin} /> : <div className={classes.root}>
         <Drawer classes={{ paper: classes.drawer }} open={true} variant='permanent'>
           <div
             tabIndex={0}
@@ -77,6 +106,7 @@ class Main extends Component {
         </Drawer>
 
         <main className={classes.chatbox}>
+          <h1>User: {this.state.userId}</h1>
           <ChatBox />
         </main>
 

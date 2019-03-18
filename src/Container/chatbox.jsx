@@ -19,10 +19,9 @@ class chatBox extends Component {
     render() {
         const { classes } = this.props;
 
-
         return (
             <div>
-                dfsd
+                chatbox
 
             </div>
         );
