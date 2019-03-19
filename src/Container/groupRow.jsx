@@ -9,12 +9,10 @@ const styles = theme => ({
 
 });
 
-class chatBox extends Component {
+class groupRow extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            input: '',
-            chatHistory: [],
         }
         this.onMessageReceived = this.onMessageReceived.bind(this);
         this.updateChatHistory = this.updateChatHistory.bind(this)
@@ -43,7 +41,7 @@ class chatBox extends Component {
     render() {
         const { classes } = this.props;
         const message_list = this.state.chatHistory.map((item, idx) => (
-            <li key={idx}>{item.timestamp} {item.username}: {item.content}</li>
+            <li key={idx}>{item.username}: {item.content}</li>
         ))
 
         return (
@@ -80,4 +78,4 @@ class chatBox extends Component {
     }
 }
 
-export default withStyles(styles)(chatBox);
+export default withStyles(styles)(groupRow);

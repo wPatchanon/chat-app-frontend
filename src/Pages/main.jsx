@@ -46,11 +46,11 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      userId: '',
+      username: '',
       client: socket(),
       isRegisterInProcess: false,
       inputBox: '',
-      chatRoom: 'A',
+      roomID: 'A',
     }
     this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
     this.handleSendMsg = this.handleSendMsg.bind(this);
@@ -60,16 +60,21 @@ class Main extends Component {
 
   handleSubmitLogin = uid => event => {
     event.preventDefault();
-    this.setState({ userId: uid });
+    this.setState({ username: uid });
     this.register(uid);
-    this.state.client.join(this.state.chatRoom)
+    this.state.client.join(uid, this.state.roomID)
   }
 
   handleSendMsg = msg => event => {
     event.preventDefault();
     //console.log(msg)
     this.setState({ inputBox: msg });
-    this.message(this.state.chatRoom, { userId: this.state.userId, content: msg });
+    this.message(this.state.roomID, {
+      username: this.state.username,
+      roomID: this.state.roomID,
+      content: msg,
+      timestamp: new Date()
+    });
   }
 
   register(name) {
@@ -111,7 +116,7 @@ class Main extends Component {
     );
 
     return (
-      (this.state.userId === '') ? <Login handleSubmit={this.handleSubmitLogin} /> : <div className={classes.root}>
+      (this.state.username === '') ? <Login handleSubmit={this.handleSubmitLogin} /> : <div className={classes.root}>
         <Drawer classes={{ paper: classes.drawer }} open={true} variant='permanent'>
           <div
             tabIndex={0}
@@ -122,8 +127,8 @@ class Main extends Component {
         </Drawer>
 
         <main className={classes.chatbox}>
-          <h1>User: {this.state.userId}</h1>
-          <ChatBox message={[{ userId: 'Palm', content: 'dfsddf' }]} handleSubmit={this.handleSendMsg}
+          <h1>User: {this.state.username}</h1>
+          <ChatBox handleSubmit={this.handleSendMsg}
             registerHandler={this.state.client.registerHandler}
           />
         </main>

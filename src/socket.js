@@ -20,8 +20,8 @@ export default function () {
         socket.emit('register', name, cb)
     }
 
-    function join(chatroomName, cb) {
-        socket.emit('join', chatroomName, cb)
+    function join(username, chatroomName, cb) {
+        socket.emit('join', { username: username, roomID: chatroomName }, cb)
     }
 
     function leave(chatroomName, cb) {
@@ -29,9 +29,7 @@ export default function () {
     }
 
     function message(chatroomName, msg, cb) {
-        socket.emit('message', { chatroomName, message: msg }, cb)
-        //io.in(chatroomName).emit('big-announcement', 'the game will start soon');
-
+        socket.emit('message', msg, cb)
     }
 
     function getChatrooms(cb) {
