@@ -130,6 +130,7 @@ class Main extends Component {
           <h1>User: {this.state.username}</h1>
           <ChatBox handleSubmit={this.handleSendMsg}
             registerHandler={this.state.client.registerHandler}
+            userName={this.state.username}
           />
         </main>
 
