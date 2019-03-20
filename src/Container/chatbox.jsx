@@ -2,11 +2,23 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import 'typeface-roboto';
+import MessageBox from './messageBox'
+import Grid from '@material-ui/core/Grid';
 
 const styles = theme => ({
     root: {
+        display: 'block'
     },
-
+    chatbox: {
+        width: '100%',
+        overflowY: 'scroll',
+    },
+    textBox: {
+        width: '100%',
+        position: "fixed",
+        bottom: 0,
+        margin: 5,
+    }
 });
 
 class chatBox extends Component {
@@ -18,8 +30,9 @@ class chatBox extends Component {
             lastSeen: new Date(),
             unreadFlag: true,
         }
-        this.onMessageReceived = this.onMessageReceived.bind(this);
+        this.onMessageReceived = this.onMessageReceived.bind(this)
         this.updateChatHistory = this.updateChatHistory.bind(this)
+        //this.scrollChatToBottom = this.scrollChatToBottom.bind(this)
     }
 
     componentDidMount() {
@@ -33,6 +46,10 @@ class chatBox extends Component {
             })
         )
         this.props.registerHandler(this.onMessageReceived)
+    }
+
+    componentWillUpdate() {
+
     }
 
     componentWillUnmount() {
@@ -64,32 +81,28 @@ class chatBox extends Component {
     render() {
         const { classes } = this.props;
         const message_list = this.state.chatHistory.map((item, idx) => (
-            < li key={idx}
-                style={{ color: item.timestamp > this.state.lastSeen && this.state.unreadFlag ? 'red' : 'black' }}
-            >
-                {item.timestamp.toString()} {item.username}: {item.content}
-            </li >
+            <Grid key={idx} container justify={item.username == this.props.userName ? 'flex-end' : 'flex-start'}>
+                <MessageBox
+                    userName={item.username}
+                    timeStamp={item.timestamp}
+                    message={item.content}
+                    isOwn={item.username == this.props.userName} />
+            </Grid>
         ))
         //if (this.state.chatHistory.length) console.log(typeof (this.state.chatHistory[0].timestamp))
         return (
-            <div>
-                room: {this.props.roomID}
-                , last: {this.state.lastSeen.toString()}
-                <div className='messageSection'>
-                    <ul>
-                        {message_list}
-                    </ul>
-                </div>
+            <Grid container>
+                <Grid item className={classes.chatbox}>
+                    {message_list}
+                </Grid>
 
-                <div style={{ marginTop: '50%' }}>
+                <Grid item className={classes.textBox}>
                     <form onSubmit={event => {
                         this.props.handleSubmit(this.state.input)(event)
                         this.setState({ input: '', unreadFlag: false })
                     }
                     }
-                        autoComplete="off"
                     >
-
                         <TextField
                             id="message"
                             label="Type Message"
@@ -100,11 +113,10 @@ class chatBox extends Component {
                             variant="outlined"
                             fullWidth
                         />
-
                     </form>
-                </div>
+                </Grid>
 
-            </div>
+            </Grid>
         );
     }
 }
