@@ -1,7 +1,7 @@
 const io = require('socket.io-client')
 
 export default function () {
-    const socket = io.connect('http://localhost:3000')
+    const socket = io.connect('http://172.20.10.12:5000')
 
     function registerHandler(onMessageReceived) {
         socket.on('message', onMessageReceived)
@@ -37,8 +37,8 @@ export default function () {
         socket.emit('join', { username: username, roomID: chatroomName }, cb)
     }
 
-    function leave(chatroomName, cb) {
-        socket.emit('leave', chatroomName, cb)
+    function leave(username, roomID, cb) {
+        socket.emit('leave', { username, roomID }, cb)
     }
 
     function message(chatroomName, msg, cb) {

@@ -86,12 +86,14 @@ class chatBox extends Component {
                     userName={item.username}
                     timeStamp={item.timestamp}
                     message={item.content}
-                    isOwn={item.username == this.props.userName} />
+                    isOwn={item.username === this.props.username}
+                    unread={(this.state.lastSeen < item.timestamp) && this.state.unreadFlag} />
             </Grid>
         ))
         //if (this.state.chatHistory.length) console.log(typeof (this.state.chatHistory[0].timestamp))
         return (
             <Grid container>
+                <button onClick={this.props.handleLeaveGroup(this.props.roomID)}>Leave</button>
                 <Grid item className={classes.chatbox}>
                     {message_list}
                 </Grid>
@@ -115,6 +117,7 @@ class chatBox extends Component {
                         />
                     </form>
                 </Grid>
+
 
             </Grid>
         );
