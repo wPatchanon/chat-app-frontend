@@ -1,20 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import Button from '@material-ui/core/Button';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import Paper from '@material-ui/core/Paper';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
-import { Typography } from '@material-ui/core';
 import ChatBox from '../Container/chatbox';
 import Login from '../Container/login';
 import socket from '../socket';
+import GroupRow from '../Container/groupRow'
 import 'typeface-roboto';
 
 const styles = theme => ({
@@ -26,10 +16,6 @@ const styles = theme => ({
   },
   fullList: {
     width: 'auto',
-  },
-  drawer: {
-    background: '#1b1b1b',
-    width: 300,
   },
   text: {
     backgroundColor: 'white',
@@ -50,7 +36,8 @@ class Main extends Component {
       client: socket(),
       isRegisterInProcess: false,
       inputBox: '',
-      roomID: 'A',
+      roomID: 'Default',
+      roomsJoined: [],
     }
     this.handleSubmitLogin = this.handleSubmitLogin.bind(this);
     this.handleSendMsg = this.handleSendMsg.bind(this);
@@ -62,7 +49,6 @@ class Main extends Component {
     event.preventDefault();
     this.setState({ username: uid });
     this.register(uid);
-    this.state.client.join(uid, this.state.roomID)
   }
 
   handleSendMsg = msg => event => {
@@ -77,6 +63,23 @@ class Main extends Component {
     });
   }
 
+  handleChangeGroup = room => event => {
+    event.preventDefault();
+    this.setState({ roomID: room });
+  }
+
+  handleJoinGroup = room => event => {
+    event.preventDefault();
+    this.state.client.join(this.state.username, room, () => {
+      return this.message(room, {
+        username: this.state.username,
+        roomID: room,
+        content: '*#Join',
+        timestamp: new Date()
+      }, () => this.setState({ roomID: room, roomsJoined: this.state.roomsJoined.concat(room) }))
+    });
+  }
+
   register(name) {
     const onRegisterResponse = user => this.setState({ isRegisterInProcess: false, user })
     this.setState({ isRegisterInProcess: true })
@@ -86,56 +89,46 @@ class Main extends Component {
     })
   }
 
-  message(chatroomName, msg) {
-    this.state.client.message(chatroomName, msg, null)
+  message(chatroomName, msg, cb) {
+    this.state.client.message(chatroomName, msg, cb)
   }
 
 
   render() {
     const { classes } = this.props;
 
-    const sideList = (
-      <div className={classes.list}>
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <Typography variant="subheading" style={{ color: '#fafafa' }}>{text}</Typography>
-            </ListItem>
-          ))}
-        </List>
-        <Divider style={{ backgroundColor: '#555555' }} />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text} >
-              <Typography variant="subheading" style={{ color: '#fafafa' }}>{text}</Typography>
-            </ListItem>
-          ))}
-        </List>
-
-      </div>
-    );
-
     return (
-      (this.state.username === '') ? <Login handleSubmit={this.handleSubmitLogin} /> : <div className={classes.root}>
-        <Drawer classes={{ paper: classes.drawer }} open={true} variant='permanent'>
-          <div
-            tabIndex={0}
-            role="button"
-          >
-            {sideList}
-          </div>
-        </Drawer>
+      (this.state.username === '') ? <Login handleSubmit={this.handleSubmitLogin} /> :
+        <div className={classes.root}>
 
-        <main className={classes.chatbox}>
-          <h1>User: {this.state.username}</h1>
-          <ChatBox handleSubmit={this.handleSendMsg}
-            registerHandler={this.state.client.registerHandler}
+          <GroupRow handleChangeGroup={this.handleChangeGroup}
+            handleJoinGroup={this.handleJoinGroup}
+            roomsJoined={this.state.roomsJoined}
+            updateGroup={this.state.client.updateGroup}
+            newGroup={this.state.client.newGroup}
+            roomID={this.state.roomID}
           />
-        </main>
+
+          <main className={classes.chatbox}>
+            <h1>User: {this.state.username}</h1>
+            <div>
+              {this.state.roomID !== 'Default' ?
+                <ChatBox
+                  key={this.state.roomID}
+                  handleSubmit={this.handleSendMsg}
+                  registerHandler={this.state.client.registerHandler}
+                  unregisterHandler={this.state.client.unregisterHandler}
+                  roomID={this.state.roomID}
+                  username={this.state.username}
+                  getMessages={this.state.client.getMessages}
+                /> : <h1>select group</h1>
+              }
+            </div>
+          </main>
 
 
 
-      </div>
+        </div>
     );
   }
 }
