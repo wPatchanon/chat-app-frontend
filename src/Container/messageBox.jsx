@@ -41,7 +41,7 @@ class MessageBox extends Component {
     }
 
     render() {
-        const { classes, message, timeStamp, isOwn, userName } = this.props;
+        const { classes, message, timeStamp, isOwn, username } = this.props;
         const timeString = new Date(timeStamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
         return (
             <div className={classes.root}>
@@ -57,7 +57,7 @@ class MessageBox extends Component {
                 <div className={classes.content} style={{backgroundColor: chatColor[isOwn?0:1]}}>
                     <Typography className={classes.title} align={isOwn ? "right" : "left"} style={{color: chatText[isOwn?0:1]}}>
                         <span>
-                        {userName}
+                        {username}
                         </span>
                     </Typography>
                     <Typography className={classes.text} align={isOwn ? "right" : "left"} style={{color: chatText[isOwn?0:1]}} variant="h5" component="h2">

@@ -18,7 +18,14 @@ const styles = theme => ({
         position: "fixed",
         bottom: 0,
         margin: 5,
-    }
+    },
+    unread: {
+        width: '100%',
+        backgroundColor: '#474747',
+        color: '#FFF',
+        textAlign: 'center',
+        marginTop: 10,
+    },
 });
 
 class chatBox extends Component {
@@ -80,15 +87,24 @@ class chatBox extends Component {
 
     render() {
         const { classes } = this.props;
-        const message_list = this.state.chatHistory.map((item, idx) => (
-            <Grid key={idx} container justify={item.username == this.props.userName ? 'flex-end' : 'flex-start'}>
-                <MessageBox
-                    userName={item.username}
-                    timeStamp={item.timestamp}
-                    message={item.content}
-                    isOwn={item.username == this.props.userName} />
-            </Grid>
-        ))
+        let first = true;
+        const message_list = this.state.chatHistory.map((item, idx) => {
+            const ret = ( <div key={idx}>
+                { (item.timestamp>=this.state.lastSeen) && (this.state.unreadFlag) && (first) &&
+                (<div className={classes.unread}>Unread Message Below</div>) }
+                <Grid container justify={item.username == this.props.username ? 'flex-end' : 'flex-start'}>
+                    <MessageBox
+                        username={item.username}
+                        timeStamp={item.timestamp}
+                        message={item.content}
+                        isOwn={item.username == this.props.username} />
+                </Grid>
+            </div>); 
+            if ((item.timestamp>=this.state.lastSeen) && (this.state.unreadFlag) && (first)) {
+                first = false;
+            }
+            return ret;
+        })
         //if (this.state.chatHistory.length) console.log(typeof (this.state.chatHistory[0].timestamp))
         return (
             <Grid container>

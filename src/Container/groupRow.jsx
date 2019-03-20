@@ -20,7 +20,27 @@ const styles = theme => ({
     listItem: {
         color: 'rebeccapurple'
     },
-
+    textField: {
+        color: '#FFF'
+    },
+    cssLabel: {
+        '&$cssFocused': {
+            color: 'white !important',
+        },
+        color: 'white !important',
+    },
+    cssFocused: {
+        color: '#FFF'
+    },
+    cssOutlinedInput: {
+        '&$cssFocused $notchedOutline': {
+            borderColor: 'white !important',
+        }
+    },
+    notchedOutline: {
+        borderWidth: '1px',
+        borderColor: 'green !important'
+    },
 });
 
 class groupRow extends Component {
@@ -72,6 +92,7 @@ class groupRow extends Component {
                             style={{ backgroundColor: (text === this.props.roomID) ? '#424242' : '#1b1b1b' }}
                         >
                             <Typography variant="subheading" style={{ color: '#1de9b6' }}>{text}</Typography>
+                            <Button color="secondary" onClick={() => alert(this.props.roomID)}>Leave</Button>
                         </ListItem>
                     ))}
                 </List>
@@ -104,10 +125,23 @@ class groupRow extends Component {
                             onChange={this.handleChange()}
                             margin="normal"
                             variant="outlined"
-                            style={{ color: 'white' }}
                             fullWidth
+                            InputLabelProps={{
+                                classes: {
+                                    root: classes.cssLabel,
+                                    focused: classes.cssFocused,
+                                    notchedOutline: classes.cssFocused,
+                                },
+                            }}
+                            InputProps={{
+                                classes: {
+                                    root: classes.cssOutlinedInput,
+                                    focused: classes.cssFocused,
+                                    notchedOutline: classes.notchedOutline,
+                                },
+                            }}
                         />
-                        <button onClick={this.handleClick}>Create</button>
+                        <Button color="secondary" onClick={this.handleClick}>Create</Button>
                         {sideList}
                     </div>
 
