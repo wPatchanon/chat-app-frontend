@@ -45,6 +45,10 @@ class Main extends Component {
     this.message = this.message.bind(this)
   }
 
+  componentDidMount() {
+    this.state.client.userRequestHandler(() => this.state.client.sendUser(this.state.username))
+  }
+
   handleSubmitLogin = uid => event => {
     event.preventDefault();
     this.setState({ username: uid });
