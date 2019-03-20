@@ -92,7 +92,7 @@ class groupRow extends Component {
                             style={{ backgroundColor: (text === this.props.roomID) ? '#424242' : '#1b1b1b' }}
                         >
                             <Typography variant="subheading" style={{ color: '#1de9b6' }}>{text}</Typography>
-                            <Button color="secondary" onClick={() => alert(this.props.roomID)}>Leave</Button>
+                            {/* <Button color="secondary" onClick={() => alert(this.props.roomID)}>Leave</Button> */}
                         </ListItem>
                     ))}
                 </List>

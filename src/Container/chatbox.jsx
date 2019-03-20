@@ -90,18 +90,20 @@ class chatBox extends Component {
 
         let first = true;
         const message_list = this.state.chatHistory.map((item, idx) => {
-            const ret = ( <div key={idx}>
-                { (item.timestamp>=this.state.lastSeen) && (this.state.unreadFlag) && (first) &&
-                (<div className={classes.unread}>Unread Message Below</div>) }
+            const ret = (<div key={idx}>
+                {(item.timestamp > this.state.lastSeen) && (this.state.unreadFlag) && (first) &&
+                    (<div className={classes.unread}>Unread Message Below</div>)}
                 <Grid container justify={item.username == this.props.username ? 'flex-end' : 'flex-start'}>
                     <MessageBox
                         username={item.username}
                         timeStamp={item.timestamp}
                         message={item.content}
-                        isOwn={item.username == this.props.username} />
+                        isOwn={item.username == this.props.username}
+                        unread={(this.state.lastSeen < item.timestamp) && this.state.unreadFlag}
+                    />
                 </Grid>
-            </div>); 
-            if ((item.timestamp>=this.state.lastSeen) && (this.state.unreadFlag) && (first)) {
+            </div>);
+            if ((item.timestamp > this.state.lastSeen) && (this.state.unreadFlag) && (first)) {
                 first = false;
             }
             return ret;
