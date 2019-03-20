@@ -1,14 +1,27 @@
 const io = require('socket.io-client')
 
 export default function () {
-    const socket = io.connect('http://localhost:5000')
+    const socket = io.connect('http://172.20.10.12:5000')
 
     function registerHandler(onMessageReceived) {
         socket.on('message', onMessageReceived)
     }
 
-    function unregisterHandler() {
+    function getMessages(username, roomID, cb) {
+        socket.emit('getMessages', { username, roomID }, cb)
+    }
+
+    function unregisterHandler(username, msg) {
         socket.off('message')
+        if (msg) socket.emit('exit', username, msg)
+    }
+
+    function updateGroup(onMessageReceived) {
+        socket.on('group', onMessageReceived)
+    }
+
+    function newGroup(room, cb) {
+        socket.emit('newGroup', room, cb)
     }
 
     socket.on('error', function (err) {
@@ -24,8 +37,8 @@ export default function () {
         socket.emit('join', { username: username, roomID: chatroomName }, cb)
     }
 
-    function leave(chatroomName, cb) {
-        socket.emit('leave', chatroomName, cb)
+    function leave(username, roomID, cb) {
+        socket.emit('leave', { username, roomID }, cb)
     }
 
     function message(chatroomName, msg, cb) {
@@ -40,6 +53,8 @@ export default function () {
         socket.emit('availableUsers', null, cb)
     }
 
+    //function newGroup(cb)
+
     return {
         register,
         join,
@@ -48,6 +63,9 @@ export default function () {
         getChatrooms,
         getAvailableUsers,
         registerHandler,
-        unregisterHandler
+        unregisterHandler,
+        updateGroup,
+        newGroup,
+        getMessages
     }
 }

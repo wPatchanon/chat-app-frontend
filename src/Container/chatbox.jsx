@@ -87,6 +87,7 @@ class chatBox extends Component {
 
     render() {
         const { classes } = this.props;
+
         let first = true;
         const message_list = this.state.chatHistory.map((item, idx) => {
             const ret = ( <div key={idx}>
@@ -105,9 +106,11 @@ class chatBox extends Component {
             }
             return ret;
         })
+
         //if (this.state.chatHistory.length) console.log(typeof (this.state.chatHistory[0].timestamp))
         return (
             <Grid container>
+                <button onClick={this.props.handleLeaveGroup(this.props.roomID)}>Leave</button>
                 <Grid item className={classes.chatbox}>
                     {message_list}
                 </Grid>
@@ -131,6 +134,7 @@ class chatBox extends Component {
                         />
                     </form>
                 </Grid>
+
 
             </Grid>
         );

@@ -80,6 +80,22 @@ class Main extends Component {
     });
   }
 
+  handleLeaveGroup = room => event => {
+    console.log('leave')
+    event.preventDefault();
+    this.state.client.leave(this.state.username, this.state.roomID, () => {
+      return this.message(room, {
+        username: this.state.username,
+        roomID: room,
+        content: '*#Leave',
+        timestamp: new Date()
+      }, () => this.setState({
+        roomID: 'Default',
+        roomsJoined: this.state.roomsJoined.filter(item => item !== room)
+      }))
+    });
+  }
+
   register(name) {
     const onRegisterResponse = user => this.setState({ isRegisterInProcess: false, user })
     this.setState({ isRegisterInProcess: true })
@@ -116,6 +132,7 @@ class Main extends Component {
                 <ChatBox
                   key={this.state.roomID}
                   handleSubmit={this.handleSendMsg}
+                  handleLeaveGroup={this.handleLeaveGroup}
                   registerHandler={this.state.client.registerHandler}
                   unregisterHandler={this.state.client.unregisterHandler}
                   roomID={this.state.roomID}
