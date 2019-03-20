@@ -1,27 +1,14 @@
 const io = require('socket.io-client')
 
 export default function () {
-    const socket = io.connect('http://localhost:3000')
+    const socket = io.connect('http://localhost:5000')
 
     function registerHandler(onMessageReceived) {
         socket.on('message', onMessageReceived)
     }
 
-    function getMessages(username, roomID, cb) {
-        socket.emit('getMessages', { username, roomID }, cb)
-    }
-
-    function unregisterHandler(username, msg) {
+    function unregisterHandler() {
         socket.off('message')
-        if (msg) socket.emit('exit', username, msg)
-    }
-
-    function updateGroup(onMessageReceived) {
-        socket.on('group', onMessageReceived)
-    }
-
-    function newGroup(room, cb) {
-        socket.emit('newGroup', room, cb)
     }
 
     socket.on('error', function (err) {
@@ -53,8 +40,6 @@ export default function () {
         socket.emit('availableUsers', null, cb)
     }
 
-    //function newGroup(cb)
-
     return {
         register,
         join,
@@ -63,9 +48,6 @@ export default function () {
         getChatrooms,
         getAvailableUsers,
         registerHandler,
-        unregisterHandler,
-        updateGroup,
-        newGroup,
-        getMessages
+        unregisterHandler
     }
 }
